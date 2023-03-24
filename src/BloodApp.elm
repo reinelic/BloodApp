@@ -41,8 +41,8 @@ type Status  = Loading | Error String | Received
 
 
 type alias Model= { 
-        status: Status
-    ,stock : Maybe ( List Stock)   
+    status: Status
+    ,stock : Maybe (List Stock)
     } 
 
 
@@ -51,36 +51,10 @@ initialModel: Model
 
 initialModel = {
                 status = Loading
-               , stock =  Nothing 
+               , stock =  Nothing
                 }
 
 type Msg = GotStock (Result Http.Error ( List Stock))
-
-
-
-
-update : Msg-> Model-> (Model , Cmd Msg) 
-update msg model =
-
-    case msg of 
-
-        GotStock result ->
-         
-            case result of
-
-                Ok response  ->
-
-                         
-                         ({ model | stock = Just response } , Cmd.none)   
-
-
-                           
-
-                Err httpError  ->
-
-                             ({model | status = Error <|(buildErrorMessage httpError)}, Cmd.none)
-
-                  
 
 
 
@@ -123,38 +97,71 @@ createCnts value cnts  =
 
 
 
+update : Msg-> Model-> (Model , Cmd Msg) 
+update msg model =
+
+    case msg of 
+
+        GotStock result ->
+         
+            case result of
+
+                Ok response  ->
+                     
+                         ({ model | status = Received ,stock =  Just response } , Cmd.none)   
+                           
+                Err httpError  ->
+
+                             ({model | status = Error <|(buildErrorMessage httpError)}, Cmd.none)
+
+                  
+
 
 
     
 
 view : Model-> Html Msg
 view model =
-    div[](
-        case model.stock of
-        
-        Just stock ->
+    div[] (
+        case model.status of
 
-         
-             h1 [] [ text " Nothing to show here"]
-         
+            Loading ->
 
-        Nothing ->
-
-          h1 [] [ text " Nothing to show here"]
-         
-     )
+             [ text "LOADING"]
 
 
+            Received ->
+
+                case  model.stock of
+
+                    Just response ->
+
+                        List.map showStock response
+
+                    Nothing ->
+
+                        [ text " We did not receive anything "]   
+            
+            Error err ->
+
+                [ text err] 
+
+            
+    )
+                
+     
 
 
-showStock : List Stock -> Html Msg
+showStock : Stock -> Html Msg
  
-showStock stock =div [] (
-       List.map ( \stk -> h1 [] [ text stk]) stock
-
-     )
-
-
+showStock stock =
+     div [][
+         h1[][text stock.id]
+         ,h1[][text stock.province]
+         ,h1[][text stock.lieu]
+         ,hr [] []
+         
+     ]
 
 
 
@@ -248,7 +255,7 @@ type alias Stock = {
 
 initialCmd : Cmd Msg
 initialCmd = Http.get {
-    url = "https://api.npoint.io/ea1ca62d45f56a0c083b/stock"
+    url = "https://api.npoint.io/ea1ca62d45f56a0c083b"
     ,expect = Http.expectJson GotStock (list stockDecoder)
  }
 
