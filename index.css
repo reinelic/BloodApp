@@ -1,0 +1,14 @@
+.content {
+  background-color: aquamarine;
+}
+nav ul {
+  display: flex;
+  justify-content: space-around;
+}
+
+#map {
+  height: 180px;
+}
+.mapL {
+  height: 180px;
+}

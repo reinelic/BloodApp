@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Learning</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+  </head>
+
+  <body>
+    <pre id="elm"></pre>
+
+    <script src="app.js"></script>
+
+    <script>
+      var app = Elm.Main.init({
+        node: document.getElementById('elm'),
+      })
+
+      app.ports.setData.subscribe(function (options) {
+        console.log(options)
+
+        app.ports.activityChange.send('this is my activity')
+      })
+    </script>
+  </body>
+</html>
